@@ -1,5 +1,7 @@
 # Smart Bookmark App
 
+**Live Demo:** [https://smart-bookmark-app-iota.vercel.app](https://smart-bookmark-app-iota.vercel.app)
+
 A simple, real-time bookmark manager built with Next.js, Supabase, and Tailwind CSS.
 
 ## Features
