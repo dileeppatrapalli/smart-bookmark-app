@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Bookmark App
 
-## Getting Started
+A simple, real-time bookmark manager built with Next.js, Supabase, and Tailwind CSS.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Google OAuth Login**: Secure sign-up and login using Google.
+- **Add Bookmarks**: Save your favorite links with a title.
+- **Private List**: Bookmarks are private to each user (protected by Row Level Security).
+- **Real-time Updates**: The list updates instantly across devices/tabs without refreshing.
+- **Delete**: Easily remove bookmarks you no longer need.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend**: Next.js (App Router), Tailwind CSS
+- **Backend**: Supabase (Auth, Database, Realtime)
+- **Deployment**: Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Challenges & Solutions
 
-## Learn More
+### 1. Supabase Client Integration in Next.js App Router
+**Problem:** I initially faced issues processing authentication callbacks and managing cookies correctly between Server Components, Client Components, and Middleware. The deprecated `@supabase/auth-helpers-nextjs` package was causing "export" errors in the build.
+**Solution:** I migrated to the modern `@supabase/ssr` package. This required updating `route.ts`, `middleware.ts`, and `supabase-browser.ts` to use `createServerClient` and `createBrowserClient` with proper cookie handling methods (`getAll`, `setAll`) compatible with Next.js 15+.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Real-time Subscription Consistency
+**Problem:** When adding a bookmark, the UI would sometimes duplicate the entry if the optimistic update conflicted with the real-time subscription event.
+**Solution:** I verified that the real-time event listener checks if the item already exists in the state before adding it. `BookmarkList.tsx` filters incoming `INSERT` events to ensure uniqueness by ID.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Build Errors with Dashboard Layout
+**Problem:** The build failed with `default export is not a React Component` in `/dashboard/layout`.
+**Solution:** The file was empty. I implemented a basic layout component to satisfy the Next.js App Router requirement for `layout.tsx` files.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Setup Instructions
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1.  Clone the repo.
+2.  Install dependencies: `npm install`.
+3.  Set up `.env.local` with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+4.  Run locally: `npm run dev`.
